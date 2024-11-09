@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   HttpCode,
@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { StatusCodes } from 'http-status-codes';
 
 import { validate as validateUUID } from 'uuid';
@@ -51,9 +51,26 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(id, updateUserDto);
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
+    if (!validateUUID(id)) {
+      throw new BadRequestException(`User id: ${id} is not valid`);
+    }
+    const { newPassword, oldPassword } = updatePasswordDto;
+
+    if (
+      !newPassword ||
+      !oldPassword ||
+      typeof newPassword !== 'string' ||
+      typeof oldPassword !== 'string'
+    ) {
+      throw new BadRequestException(`Missing required fields`);
+    }
+
+    return this.userService.update(id, updatePasswordDto);
   }
 
   @Delete(':id')

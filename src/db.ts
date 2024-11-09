@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { User } from './interfaces/interfaces';
 import { CreateUserDto } from './user/dto/create-user.dto';
+import { UpdatePasswordDto } from './user/dto/update-password.dto';
 
 @Injectable()
 export class Database {
@@ -41,6 +42,35 @@ export class Database {
       returnedUser = Object.fromEntries(
         Object.entries(user).filter((item) => item[0] !== 'password'),
       );
+    }
+
+    return returnedUser;
+  }
+
+  updateUser(id: string, updatePasswordDto: UpdatePasswordDto) {
+    let user = this.users.find((user) => user.id === id);
+    let returnedUser: any;
+    const { newPassword, oldPassword } = updatePasswordDto;
+
+    if (user) {
+      const index = this.users.indexOf(user);
+
+      if (user.password === oldPassword) {
+        user = {
+          ...user,
+          password: newPassword,
+          version: user.version + 1,
+          updatedAt: Date.now(),
+        };
+
+        this.users[index] = user;
+
+        returnedUser = Object.fromEntries(
+          Object.entries(user).filter((item) => item[0] !== 'password'),
+        );
+      } else {
+        throw new ForbiddenException('Operation is forbidden');
+      }
     }
 
     return returnedUser;

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Database } from 'src/db';
 
 @Injectable()
@@ -25,8 +25,9 @@ export class UserService {
     return user;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(id: string, updatePasswordDto: UpdatePasswordDto) {
+    this.findOne(id);
+    return this.db.updateUser(id, updatePasswordDto);
   }
 
   delete(id: string) {
