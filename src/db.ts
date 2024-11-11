@@ -190,3 +190,5 @@ export class Database {
     return updatedAlbum;
   }
 }
+
+export const base = new Database();

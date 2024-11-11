@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { Database } from 'src/db';
 
 @Injectable()
 export class UserService {
-  constructor(private db: Database) {}
+  constructor(@Inject('Database') private db: Database) {}
 
   create(createUserDto: CreateUserDto) {
     return this.db.createUser(createUserDto);

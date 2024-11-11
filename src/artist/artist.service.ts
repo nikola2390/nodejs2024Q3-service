@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Database } from 'src/db';
 
 @Injectable()
 export class ArtistService {
-  constructor(private db: Database) {}
+  constructor(@Inject('Database') private db: Database) {}
 
   create(createArtistDto: CreateArtistDto) {
     return this.db.createArtist(createArtistDto);

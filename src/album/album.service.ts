@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { Database } from 'src/db';
 
 @Injectable()
 export class AlbumService {
-  constructor(private db: Database) {}
+  constructor(@Inject('Database') private db: Database) {}
 
   create(createAlbumDto: CreateAlbumDto) {
     return this.db.createAlbum(createAlbumDto);
