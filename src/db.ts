@@ -137,6 +137,26 @@ export class Database {
 
   deleteArtist(id: string): void {
     this.artists = this.artists.filter((artist) => artist.id !== id);
+    this.tracks = this.tracks.map((track) => {
+      if (track.artistId === id) {
+        track = {
+          ...track,
+          artistId: null,
+        };
+      }
+
+      return track;
+    });
+    this.albums = this.albums.map((album) => {
+      if (album.artistId === id) {
+        album = {
+          ...album,
+          artistId: null,
+        };
+      }
+
+      return album;
+    });
   }
 
   getArtist(id: string): Artist {
