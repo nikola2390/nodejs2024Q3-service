@@ -1,14 +1,17 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Track, User } from './interfaces/interfaces';
+import { Artist, Track, User } from './interfaces/interfaces';
 import { CreateUserDto } from './user/dto/create-user.dto';
 import { UpdatePasswordDto } from './user/dto/update-password.dto';
 import { CreateTrackDto } from './track/dto/create-track.dto';
 import { UpdateTrackDto } from './track/dto/update-track.dto';
+import { CreateArtistDto } from './artist/dto/create-artist.dto';
+import { UpdateArtistDto } from './artist/dto/update-artist.dto';
 
 @Injectable()
 export class Database {
   private users: User[] = [];
   private tracks: Track[] = [];
+  private artists: Artist[] = [];
 
   getAllUsers(): User[] {
     return this.users;
@@ -112,5 +115,40 @@ export class Database {
     this.tracks[index] = updatedTrack;
 
     return updatedTrack;
+  }
+
+  getAllArtists(): Artist[] {
+    return this.artists;
+  }
+
+  createArtist(createArtistDto: CreateArtistDto): Artist {
+    const newArtist: Artist = {
+      id: crypto.randomUUID(),
+      ...createArtistDto,
+    };
+
+    this.artists.push(newArtist);
+
+    return newArtist;
+  }
+
+  deleteArtist(id: string): void {
+    this.artists = this.artists.filter((artist) => artist.id !== id);
+  }
+
+  getArtist(id: string): Artist {
+    return this.artists.find((artist) => artist.id === id);
+  }
+
+  updateArtist(id: string, updateArtistDto: UpdateArtistDto) {
+    const artist = this.artists.find((artist) => artist.id === id);
+    const updatedArtist = {
+      ...artist,
+      ...updateArtistDto,
+    };
+    const index = this.artists.indexOf(artist);
+    this.artists[index] = updatedArtist;
+
+    return updatedArtist;
   }
 }
