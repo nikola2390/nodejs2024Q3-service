@@ -19,7 +19,7 @@ export class ArtistService {
     const artist = this.db.getArtist(id);
 
     if (!artist) {
-      throw new NotFoundException(`User with id: ${id} not exist`);
+      throw new NotFoundException(`Artist with id: ${id} not exist`);
     }
     return artist;
   }

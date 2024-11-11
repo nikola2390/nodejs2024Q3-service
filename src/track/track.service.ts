@@ -20,7 +20,7 @@ export class TrackService {
     const track = this.db.getTrack(id);
 
     if (!track) {
-      throw new NotFoundException(`User with id: ${id} not exist`);
+      throw new NotFoundException(`Track with id: ${id} not exist`);
     }
 
     return track;
