@@ -172,6 +172,16 @@ export class Database {
 
   deleteAlbum(id: string): void {
     this.albums = this.albums.filter((album) => album.id !== id);
+    this.tracks = this.tracks.map((track) => {
+      if (track.albumId === id) {
+        track = {
+          ...track,
+          albumId: null,
+        };
+      }
+
+      return track;
+    });
   }
 
   getAlbum(id: string): Album {
