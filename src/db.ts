@@ -1,17 +1,20 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Artist, Track, User } from './interfaces/interfaces';
+import { Album, Artist, Track, User } from './interfaces/interfaces';
 import { CreateUserDto } from './user/dto/create-user.dto';
 import { UpdatePasswordDto } from './user/dto/update-password.dto';
 import { CreateTrackDto } from './track/dto/create-track.dto';
 import { UpdateTrackDto } from './track/dto/update-track.dto';
 import { CreateArtistDto } from './artist/dto/create-artist.dto';
 import { UpdateArtistDto } from './artist/dto/update-artist.dto';
+import { CreateAlbumDto } from './album/dto/create-album.dto';
+import { UpdateAlbumDto } from './album/dto/update-album.dto';
 
 @Injectable()
 export class Database {
   private users: User[] = [];
   private tracks: Track[] = [];
   private artists: Artist[] = [];
+  private albums: Album[] = [];
 
   getAllUsers(): User[] {
     return this.users;
@@ -150,5 +153,40 @@ export class Database {
     this.artists[index] = updatedArtist;
 
     return updatedArtist;
+  }
+
+  getAllAlbums(): Album[] {
+    return this.albums;
+  }
+
+  createAlbum(createAlbumDto: CreateAlbumDto): Album {
+    const newAlbum: Album = {
+      id: crypto.randomUUID(),
+      ...createAlbumDto,
+    };
+
+    this.albums.push(newAlbum);
+
+    return newAlbum;
+  }
+
+  deleteAlbum(id: string): void {
+    this.albums = this.albums.filter((album) => album.id !== id);
+  }
+
+  getAlbum(id: string): Album {
+    return this.albums.find((album) => album.id === id);
+  }
+
+  updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto): Album {
+    const album = this.albums.find((album) => album.id === id);
+    const updatedAlbum = {
+      ...album,
+      ...updateAlbumDto,
+    };
+    const index = this.albums.indexOf(album);
+    this.albums[index] = updatedAlbum;
+
+    return updatedAlbum;
   }
 }
