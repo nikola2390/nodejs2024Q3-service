@@ -27,3 +27,15 @@ export interface Album {
   year: number;
   artistId: string | null;
 }
+
+export interface Favorites {
+  artists: string[];
+  albums: string[];
+  tracks: string[];
+}
+
+export interface FavoritesResponse {
+  artists: Artist[];
+  albums: Album[];
+  tracks: Track[];
+}

@@ -1,5 +1,12 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { Album, Artist, Track, User } from './interfaces/interfaces';
+import {
+  Album,
+  Artist,
+  Favorites,
+  FavoritesResponse,
+  Track,
+  User,
+} from './interfaces/interfaces';
 import { CreateUserDto } from './user/dto/create-user.dto';
 import { UpdatePasswordDto } from './user/dto/update-password.dto';
 import { CreateTrackDto } from './track/dto/create-track.dto';
@@ -15,6 +22,11 @@ export class Database {
   private tracks: Track[] = [];
   private artists: Artist[] = [];
   private albums: Album[] = [];
+  private favs: Favorites = {
+    artists: [],
+    albums: [],
+    tracks: [],
+  };
 
   getAllUsers(): User[] {
     return this.users;
@@ -102,6 +114,8 @@ export class Database {
 
   deleteTrack(id: string): void {
     this.tracks = this.tracks.filter((track) => track.id !== id);
+
+    this.deleteTrackFromFavs(id);
   }
 
   getTrack(id: string): Track {
@@ -157,6 +171,8 @@ export class Database {
 
       return album;
     });
+
+    this.deleteArtistFromFavs(id);
   }
 
   getArtist(id: string): Artist {
@@ -202,6 +218,8 @@ export class Database {
 
       return track;
     });
+
+    this.deleteAlbumFromFavs(id);
   }
 
   getAlbum(id: string): Album {
@@ -218,6 +236,70 @@ export class Database {
     this.albums[index] = updatedAlbum;
 
     return updatedAlbum;
+  }
+
+  getAllFavorites(): FavoritesResponse {
+    const response: FavoritesResponse = {
+      artists: [],
+      albums: [],
+      tracks: [],
+    };
+
+    this.favs.tracks.forEach((trackId) => {
+      const track = this.getTrack(trackId);
+
+      response.tracks.push(track);
+    });
+
+    this.favs.artists.forEach((artistId) => {
+      const artist = this.getArtist(artistId);
+
+      response.artists.push(artist);
+    });
+
+    this.favs.albums.forEach((albumId) => {
+      const album = this.getAlbum(albumId);
+
+      response.albums.push(album);
+    });
+
+    return response;
+  }
+
+  addTrackToFavs(id: string) {
+    this.favs.tracks.push(id);
+  }
+
+  addAlbumToFavs(id: string) {
+    this.favs.albums.push(id);
+  }
+
+  addArtistToFavs(id: string) {
+    this.favs.artists.push(id);
+  }
+
+  deleteTrackFromFavs(id: string) {
+    this.favs.tracks = this.favs.tracks.filter((trackId) => trackId !== id);
+  }
+
+  deleteAlbumFromFavs(id: string) {
+    this.favs.albums = this.favs.albums.filter((albumId) => albumId !== id);
+  }
+
+  deleteArtistFromFavs(id: string) {
+    this.favs.artists = this.favs.artists.filter((artistId) => artistId !== id);
+  }
+
+  isTrackFavorite(id: string): boolean {
+    return this.favs.tracks.includes(id);
+  }
+
+  isAlbumFavorite(id: string): boolean {
+    return this.favs.albums.includes(id);
+  }
+
+  isArtistFavorite(id: string): boolean {
+    return this.favs.artists.includes(id);
   }
 }
 
